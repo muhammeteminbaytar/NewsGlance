@@ -1,4 +1,4 @@
-package com.mbaytar.newsglance.presentation.ui.screens.homescreen
+package com.mbaytar.newsglance.presentation.ui.screens.savescreen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -9,12 +9,10 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 
 @Composable
-fun HomeScreen(
-    navController: NavController,
-) {
+fun SaveScreen(navController: NavController) {
     Scaffold {
         Column(Modifier.padding(it)) {
-        Text(text = "HomeScreen")
+            Text(text = "SaveScreen")
         }
     }
 }

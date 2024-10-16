@@ -19,7 +19,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.mbaytar.newsglance.presentation.ui.components.AppBottomBar
+import com.mbaytar.newsglance.presentation.ui.screens.detailarticlescreen.DetailArticleScreen
 import com.mbaytar.newsglance.presentation.ui.screens.homescreen.HomeScreen
+import com.mbaytar.newsglance.presentation.ui.screens.savescreen.SaveScreen
 import com.mbaytar.newsglance.presentation.ui.theme.NewsGlanceTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -31,7 +34,7 @@ class MainActivity : ComponentActivity() {
             NewsGlanceTheme {
                 val navController = rememberNavController()
 
-                Scaffold {
+                Scaffold(bottomBar = { AppBottomBar(navController = navController) }) {
                     Column(Modifier.padding(it)) {
                         Content(navController = navController)
                     }
@@ -49,6 +52,12 @@ fun Content(
         composable(route = Screen.HomeScreen.route) {
             HomeScreenContent(navController = navController)
         }
+        composable(route = Screen.DetailScreen.route) {
+            DetailArticleScreenContent(navController = navController)
+        }
+        composable(route = Screen.SaveScreen.route) {
+            SaveScreenContent(navController = navController)
+        }
     }
 }
 
@@ -61,5 +70,26 @@ fun HomeScreenContent(navController: NavController) {
     ) {
         HomeScreen(navController = navController)
     }
+}
 
+@Composable
+fun DetailArticleScreenContent(navController: NavController) {
+    Column(
+        Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        DetailArticleScreen(navController = navController)
+    }
+}
+
+@Composable
+fun SaveScreenContent(navController: NavController) {
+    Column(
+        Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        SaveScreen(navController = navController)
+    }
 }
