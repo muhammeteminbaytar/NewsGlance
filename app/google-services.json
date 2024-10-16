@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "367258419948",
+    "project_id": "newsglance-f002f",
+    "storage_bucket": "newsglance-f002f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:367258419948:android:34d8cd80225d86a0e9dbc9",
+        "android_client_info": {
+          "package_name": "com.mbaytar.newsglance"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyArNNEuMNkcbxgLGs4fYhinQyZIIo2HsSc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

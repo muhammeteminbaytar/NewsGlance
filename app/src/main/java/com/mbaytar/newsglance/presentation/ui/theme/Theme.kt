@@ -1,4 +1,4 @@
-package com.example.newsglance.ui.theme
+package com.mbaytar.newsglance.presentation.ui.theme
 
 import android.app.Activity
 import android.os.Build

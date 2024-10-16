@@ -1,14 +1,18 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    id("kotlin-kapt")
+    alias(libs.plugins.hilt)
+    id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
 }
 
 android {
-    namespace = "com.example.newsglance"
+    namespace = "com.mbaytar.newsglance"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.newsglance"
+        applicationId = "com.mbaytar.newsglance"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
@@ -66,4 +70,56 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation (libs.androidx.material)
+    implementation (libs.androidx.material.icons.extended)
+
+
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.config)
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
+
+    implementation(libs.lottie.compose)
+
+    // Coroutine Lifecycle Scopes
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx.v262)
+
+    //Dagger - Hilt
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
+    kapt(libs.androidx.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.hilt.work)
+    implementation(libs.androidx.work.runtime.ktx)
+
+
+    // Retrofit
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
+
+    // Coil
+    implementation(libs.coil.compose)
+
+    //ui controller
+    implementation (libs.accompanist.systemuicontroller)
+
+    //font
+    implementation(libs.androidx.ui.text.google.fonts)
+
+    // Compose dependencies
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.accompanist.flowlayout)
+
+    // Coroutines
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+}
+
+kapt {
+    correctErrorTypes = true
 }

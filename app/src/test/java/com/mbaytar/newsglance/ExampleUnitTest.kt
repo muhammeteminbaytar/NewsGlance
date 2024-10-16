@@ -1,4 +1,4 @@
-package com.example.newsglance
+package com.mbaytar.newsglance
 
 import org.junit.Test
 
