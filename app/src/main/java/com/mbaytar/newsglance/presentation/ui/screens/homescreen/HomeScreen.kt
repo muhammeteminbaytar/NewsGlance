@@ -1,7 +1,9 @@
 package com.mbaytar.newsglance.presentation.ui.screens.homescreen
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -37,6 +39,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.mbaytar.newsglance.R
 import com.mbaytar.newsglance.domain.model.News
+import com.mbaytar.newsglance.util.components.ShimmerEffect
 
 @Composable
 fun HomeScreen(
@@ -55,7 +58,15 @@ fun NewsList(viewModel: HomeScreenViewModel) {
     val state = viewModel.state.value
 
     if (state.isLoading) {
-        CircularProgressIndicator(modifier = Modifier.fillMaxSize())
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(5) {
+                NewsItemShimmer()
+            }
+        }
     } else if (state.error.isNotEmpty()) {
         Text(text = state.error, modifier = Modifier.fillMaxSize())
     } else {
@@ -93,7 +104,7 @@ fun NewsItem(article: News) {
         Spacer(modifier = Modifier.width(8.dp))
         Column {
             Text(
-                modifier = Modifier.padding(top = 12.dp),
+                modifier = Modifier.padding(top = 6.dp),
                 text = article.title,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.ExtraBold,
@@ -101,7 +112,7 @@ fun NewsItem(article: News) {
                 overflow = TextOverflow.Ellipsis
             )
             Spacer(modifier = Modifier.weight(1f))
-            Row(Modifier.padding(bottom = 16.dp)) {
+            Row(Modifier.padding(bottom = 24.dp)) {
                 Text(
                     text = article.author ?: "Unknown",
                     fontSize = 14.sp,
@@ -116,6 +127,71 @@ fun NewsItem(article: News) {
                     color = Color.Gray,
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Medium
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun NewsItemShimmer() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .height(120.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(100.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(Color.LightGray.copy(alpha = 0.5f))
+        ) {
+            ShimmerEffect(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.LightGray, shape = RoundedCornerShape(12.dp))
+            )
+        }
+        Spacer(modifier = Modifier.width(8.dp))
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            ShimmerEffect(
+                modifier = Modifier
+                    .height(16.dp)
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Color.LightGray, shape = RoundedCornerShape(8.dp))
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            ShimmerEffect(
+                modifier = Modifier
+                    .height(14.dp)
+                    .fillMaxWidth(0.6f)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Color.LightGray, shape = RoundedCornerShape(8.dp))
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+            ) {
+                ShimmerEffect(
+                    modifier = Modifier
+                        .height(14.dp)
+                        .width(80.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Color.LightGray, shape = RoundedCornerShape(8.dp))
+                )
+                Spacer(Modifier.weight(1f))
+                ShimmerEffect(
+                    modifier = Modifier
+                        .height(14.dp)
+                        .width(60.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Color.LightGray, shape = RoundedCornerShape(8.dp))
                 )
             }
         }

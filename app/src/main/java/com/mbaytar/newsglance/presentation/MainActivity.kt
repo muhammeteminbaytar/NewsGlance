@@ -20,6 +20,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.mbaytar.newsglance.presentation.ui.components.AppBottomBar
+import com.mbaytar.newsglance.presentation.ui.components.AppTopBar
 import com.mbaytar.newsglance.presentation.ui.screens.detailarticlescreen.DetailArticleScreen
 import com.mbaytar.newsglance.presentation.ui.screens.homescreen.HomeScreen
 import com.mbaytar.newsglance.presentation.ui.screens.savescreen.SaveScreen
@@ -34,7 +35,9 @@ class MainActivity : ComponentActivity() {
             NewsGlanceTheme {
                 val navController = rememberNavController()
 
-                Scaffold(bottomBar = { AppBottomBar(navController = navController) }) {
+                Scaffold(
+                    topBar = { AppTopBar(navController = navController) },
+                    bottomBar = { AppBottomBar(navController = navController) }) {
                     Column(Modifier.padding(it)) {
                         Content(navController = navController)
                     }
