@@ -36,7 +36,6 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
 
                 Scaffold(
-                    topBar = { AppTopBar(navController = navController) },
                     bottomBar = { AppBottomBar(navController = navController) }) {
                     Column(Modifier.padding(it)) {
                         Content(navController = navController)
