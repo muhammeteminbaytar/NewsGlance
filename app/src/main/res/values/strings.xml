@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">News Glance</string>
+    <string name="network_not_connection">No Internet Connection</string>
 </resources>
