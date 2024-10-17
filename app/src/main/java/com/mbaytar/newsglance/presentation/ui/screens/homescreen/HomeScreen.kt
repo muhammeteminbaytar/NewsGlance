@@ -60,6 +60,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.mbaytar.newsglance.R
 import com.mbaytar.newsglance.domain.model.News
+import com.mbaytar.newsglance.presentation.Screen
 import com.mbaytar.newsglance.presentation.ui.components.AppTopBar
 import com.mbaytar.newsglance.presentation.ui.theme.LightGray
 import com.mbaytar.newsglance.presentation.ui.theme.PrimaryColor
@@ -78,7 +79,7 @@ fun HomeScreen(
         })
     }) {
         Column(Modifier.padding(it)) {
-            NewsList(viewModel = viewModel)
+            NewsList(viewModel = viewModel, navController)
         }
     }
 }
@@ -134,7 +135,7 @@ fun SearchBox(onSearch: (String) -> Unit) {
 
 
 @Composable
-fun NewsList(viewModel: HomeScreenViewModel) {
+fun NewsList(viewModel: HomeScreenViewModel, navController: NavController) {
     val state = viewModel.state.value
 
     if (state.isLoading) {
@@ -156,19 +157,23 @@ fun NewsList(viewModel: HomeScreenViewModel) {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(state.news) { article ->
-                NewsItem(article = article)
+                NewsItem(article = article, navController)
             }
         }
     }
 }
 
 @Composable
-fun NewsItem(article: News) {
+fun NewsItem(article: News, navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
             .height(120.dp)
+            .clickable {
+                navController.currentBackStackEntry?.arguments?.putParcelable("newsDetail", article)
+                navController.navigate(Screen.DetailScreen.createRoute(article))
+            }
     ) {
         Image(
             painter = if (article.urlToImage.isNotEmpty()) rememberAsyncImagePainter(article.urlToImage) else painterResource(
