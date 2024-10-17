@@ -2,7 +2,7 @@ package com.mbaytar.newsglance.domain.model
 
 import com.mbaytar.newsglance.data.remote.dto.Source
 
-data class NewsTop(
+data class News(
     val author: String,
     val content: String,
     val description: String,

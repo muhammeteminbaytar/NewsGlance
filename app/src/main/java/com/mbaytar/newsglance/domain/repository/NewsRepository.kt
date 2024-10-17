@@ -1,7 +1,8 @@
 package com.mbaytar.newsglance.domain.repository
 
-import com.mbaytar.newsglance.data.remote.dto.NewsTopDto
+import com.mbaytar.newsglance.data.remote.dto.NewsEverythingDto
+
 
 interface NewsRepository {
-    suspend fun getNewsTop() : NewsTopDto
+    suspend fun getNewsEverything() : NewsEverythingDto
 }
