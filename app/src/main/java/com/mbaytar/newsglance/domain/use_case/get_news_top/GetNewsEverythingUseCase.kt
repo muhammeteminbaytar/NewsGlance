@@ -12,10 +12,10 @@ import javax.inject.Inject
 
 class GetNewsEverythingUseCase @Inject constructor(private val repository: NewsRepository) {
 
-    fun executeGetNewsTop(): Flow<Resource<List<News>>> = flow {
+    fun executeGetNewsTop(search: String): Flow<Resource<List<News>>> = flow {
         try {
             emit(Resource.Loading())
-            val newsList = repository.getNewsEverything()
+            val newsList = repository.getNewsEverything(search)
 
             if (newsList.articles.isNotEmpty()) {
                 emit(Resource.Success(newsList.toNewsEverythingList()))

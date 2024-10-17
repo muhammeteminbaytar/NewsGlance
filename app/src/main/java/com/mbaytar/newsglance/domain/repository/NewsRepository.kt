@@ -4,5 +4,5 @@ import com.mbaytar.newsglance.data.remote.dto.NewsEverythingDto
 
 
 interface NewsRepository {
-    suspend fun getNewsEverything() : NewsEverythingDto
+    suspend fun getNewsEverything(searchString: String) : NewsEverythingDto
 }
