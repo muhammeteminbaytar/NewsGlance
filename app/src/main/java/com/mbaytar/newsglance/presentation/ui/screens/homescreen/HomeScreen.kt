@@ -149,7 +149,9 @@ fun NewsList(viewModel: HomeScreenViewModel, navController: NavController) {
             }
         }
     } else if (state.error.isNotEmpty()) {
-        Text(text = state.error, modifier = Modifier.fillMaxSize())
+        Box (Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+            Image(painter = painterResource(id = R.drawable.error), contentDescription = "", Modifier.fillMaxSize().padding(48.dp))
+        }
     } else {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
