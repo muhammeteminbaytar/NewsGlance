@@ -42,7 +42,7 @@ fun AppBottomBar(navController: NavController) {
     )
 
     Box {
-        Column {
+        Column (Modifier.background(Color.White)){
             Box(
                 modifier = Modifier
                     .height(1.dp)

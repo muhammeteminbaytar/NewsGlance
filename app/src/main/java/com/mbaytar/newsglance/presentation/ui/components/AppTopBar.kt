@@ -1,5 +1,6 @@
 package com.mbaytar.newsglance.presentation.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,7 +29,7 @@ fun AppTopBar(
     navigation: @Composable (() -> Unit)? = null,
     actions: @Composable (() -> Unit)? = null
 ) {
-    Column {
+    Column (Modifier.background(Color.White)){
         TopAppBar(
             title = {
 

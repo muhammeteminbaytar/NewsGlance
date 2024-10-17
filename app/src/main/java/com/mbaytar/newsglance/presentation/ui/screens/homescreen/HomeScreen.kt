@@ -73,7 +73,7 @@ fun HomeScreen(
 ) {
     Scaffold(topBar = {
         AppTopBar(navController = navController, actions = {
-            SearchBox(onSearch = {
+            SearchBox(viewModel, onSearch = {
                 viewModel.onEvent(NewsEvent.Search(it))
             })
         })
@@ -85,7 +85,7 @@ fun HomeScreen(
 }
 
 @Composable
-fun SearchBox(onSearch: (String) -> Unit) {
+fun SearchBox(viewModel: HomeScreenViewModel, onSearch: (String) -> Unit) {
     var searchText by remember { mutableStateOf("") }
     val focusManager = LocalFocusManager.current
     var isFocused by remember { mutableStateOf(false) }
@@ -171,8 +171,8 @@ fun NewsItem(article: News, navController: NavController) {
             .padding(8.dp)
             .height(120.dp)
             .clickable {
-                navController.currentBackStackEntry?.arguments?.putParcelable("newsDetail", article)
-                navController.navigate(Screen.DetailScreen.createRoute(article))
+                navController.currentBackStackEntry?.savedStateHandle?.set("newsDetail", article)
+                navController.navigate(Screen.DetailScreen.route)
             }
     ) {
         Image(

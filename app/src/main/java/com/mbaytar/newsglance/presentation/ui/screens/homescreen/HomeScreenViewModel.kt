@@ -22,7 +22,7 @@ class HomeScreenViewModel @Inject constructor(
     private val _state = mutableStateOf(NewsState())
     val state: State<NewsState> = _state
 
-    private val dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+    private val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
     init {
         getNews(_state.value.search)

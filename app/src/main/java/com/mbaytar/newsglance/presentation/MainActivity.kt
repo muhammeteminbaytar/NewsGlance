@@ -16,14 +16,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.mbaytar.newsglance.presentation.ui.components.AppBottomBar
 import com.mbaytar.newsglance.presentation.ui.components.AppTopBar
 import com.mbaytar.newsglance.presentation.ui.screens.detailarticlescreen.DetailArticleScreen
 import com.mbaytar.newsglance.presentation.ui.screens.homescreen.HomeScreen
+import com.mbaytar.newsglance.presentation.ui.screens.homescreen.HomeScreenViewModel
 import com.mbaytar.newsglance.presentation.ui.screens.savescreen.SaveScreen
+import com.mbaytar.newsglance.presentation.ui.screens.webviewscreen.WebViewScreen
 import com.mbaytar.newsglance.presentation.ui.theme.NewsGlanceTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -60,6 +64,15 @@ fun Content(
         composable(route = Screen.SaveScreen.route) {
             SaveScreenContent(navController = navController)
         }
+        composable(
+            route = Screen.WebViewScreen.route,
+            arguments = listOf(navArgument("newsUrl") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val newsUrl = backStackEntry.arguments?.getString("newsUrl")
+            if (newsUrl != null) {
+                WebViewScreenContent(navController = navController, newsUrl = newsUrl)
+            }
+        }
     }
 }
 
@@ -93,5 +106,16 @@ fun SaveScreenContent(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         SaveScreen(navController = navController)
+    }
+}
+
+@Composable
+fun WebViewScreenContent(navController: NavController, newsUrl: String) {
+    Column(
+        Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        WebViewScreen(navController = navController, newsUrl = newsUrl)
     }
 }
