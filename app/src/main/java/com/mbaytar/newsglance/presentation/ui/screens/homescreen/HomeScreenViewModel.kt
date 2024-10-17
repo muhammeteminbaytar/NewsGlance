@@ -10,6 +10,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,6 +21,8 @@ class HomeScreenViewModel @Inject constructor(
 
     private val _state = mutableStateOf(NewsState())
     val state: State<NewsState> = _state
+
+    private val dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
 
     init {
         getNews(_state.value.search)
@@ -31,7 +35,12 @@ class HomeScreenViewModel @Inject constructor(
         job = getNewsTopUseCase.executeGetNewsTop(searchString).onEach {
             when (it) {
                 is Resource.Success -> {
-                    _state.value = NewsState(news = it.data ?: emptyList())
+                    val formattedNewsList = it.data?.map { article ->
+                        article.copy(
+                            publishedAt = formatDate(article.publishedAt)
+                        )
+                    } ?: emptyList()
+                    _state.value = NewsState(news = formattedNewsList)
                 }
 
                 is Resource.Error -> {
@@ -51,5 +60,15 @@ class HomeScreenViewModel @Inject constructor(
                 getNews(event.searchString)
             }
         }
+    }
+
+    private fun formatDate(isoDate: String?): String {
+        return isoDate?.let {
+            try {
+                ZonedDateTime.parse(it).format(dateFormatter)
+            } catch (e: Exception) {
+                "Unknown date"
+            }
+        } ?: "Unknown date"
     }
 }

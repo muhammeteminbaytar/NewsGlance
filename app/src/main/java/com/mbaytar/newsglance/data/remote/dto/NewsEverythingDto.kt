@@ -9,16 +9,20 @@ data class NewsEverythingDto(
 )
 
 fun NewsEverythingDto.toNewsEverythingList(): List<News> {
-    return articles.map { article ->
-        News(
-            author = article.author ?: "Unknown",
-            content = article.content ?: "No content",
-            description = article.description ?: "No description",
-            publishedAt = article.publishedAt ?: "Unknown date",
-            source = article.source ?: Source("Unknown", "Unknown"),
-            title = article.title ?: "No title",
-            url = article.url ?: "",
-            urlToImage = article.urlToImage ?: ""
-        )
-    }
+    return articles
+        .filter { article ->
+            article.title?.contains("Removed") == false
+        }
+        .map { article ->
+            News(
+                author = article.author ?: "Unknown",
+                content = article.content ?: "No content",
+                description = article.description ?: "No description",
+                publishedAt = article.publishedAt ?: "Unknown date",
+                source = article.source ?: Source("Unknown", "Unknown"),
+                title = article.title ?: "No title",
+                url = article.url ?: "",
+                urlToImage = article.urlToImage ?: ""
+            )
+        }
 }
