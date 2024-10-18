@@ -77,9 +77,8 @@ fun HomeScreen(
                 viewModel.onEvent(NewsEvent.Search(it))
             })
         })
-    }) {
-        Column(Modifier.padding(it)) {
-            NewsCarousel(news = viewModel.state.value.news.take(5), navController = navController)
+    }) { padding ->
+        Column(Modifier.padding(padding)) {
             NewsList(viewModel = viewModel, navController)
         }
     }
@@ -90,7 +89,7 @@ fun HomeScreen(
 fun NewsCarousel(news: List<News>, navController: NavController) {
     if (news.isNotEmpty()) {
         var currentPage by remember { mutableIntStateOf(0) }
-        val pagerState = rememberPagerState { 5 }
+        val pagerState = rememberPagerState { news.size }
         val pageCount = news.size
 
         LaunchedEffect(key1 = currentPage) {
@@ -113,7 +112,6 @@ fun NewsCarousel(news: List<News>, navController: NavController) {
 
         Column(
             Modifier
-                .padding(horizontal = 12.dp)
                 .clip(RoundedCornerShape(12.dp))
                 .fillMaxWidth()
         ) {
@@ -128,7 +126,10 @@ fun NewsCarousel(news: List<News>, navController: NavController) {
                 Box(
                     modifier = Modifier
                         .clickable {
-                            navController.currentBackStackEntry?.savedStateHandle?.set("newsDetail", article)
+                            navController.currentBackStackEntry?.savedStateHandle?.set(
+                                "newsDetail",
+                                article
+                            )
                             navController.navigate(Screen.DetailScreen.route)
                         }
                 ) {
@@ -179,11 +180,14 @@ fun NewsCarousel(news: List<News>, navController: NavController) {
             }
 
             Row(
-                modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp),
                 horizontalArrangement = Arrangement.Center
             ) {
                 repeat(pageCount) { page ->
-                    val color = if (page == pagerState.currentPage) PrimaryColor else Color.LightGray
+                    val color =
+                        if (page == pagerState.currentPage) PrimaryColor else Color.LightGray
                     Box(
                         modifier = Modifier
                             .size(12.dp)
@@ -196,7 +200,6 @@ fun NewsCarousel(news: List<News>, navController: NavController) {
         }
     }
 }
-
 
 
 @Composable
@@ -292,6 +295,12 @@ fun NewsList(viewModel: HomeScreenViewModel, navController: NavController) {
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
+                item {
+                    NewsCarousel(news = viewModel.state.value.news.let { list ->
+                        if (list.size <= 5) list
+                        else list.take(5)
+                    }, navController = navController)
+                }
                 items(state.news) { article ->
                     NewsItem(article = article, navController)
                 }
