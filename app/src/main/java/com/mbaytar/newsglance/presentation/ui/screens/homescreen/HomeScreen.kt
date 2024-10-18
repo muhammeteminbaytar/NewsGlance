@@ -1,7 +1,5 @@
 package com.mbaytar.newsglance.presentation.ui.screens.homescreen
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -20,18 +18,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -48,7 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -57,12 +51,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import com.mbaytar.newsglance.R
 import com.mbaytar.newsglance.domain.model.News
 import com.mbaytar.newsglance.presentation.Screen
 import com.mbaytar.newsglance.presentation.ui.components.AppTopBar
-import com.mbaytar.newsglance.presentation.ui.theme.LightGray
 import com.mbaytar.newsglance.presentation.ui.theme.PrimaryColor
 import com.mbaytar.newsglance.util.components.ShimmerEffect
 
@@ -86,7 +78,7 @@ fun HomeScreen(
 
 @Composable
 fun SearchBox(viewModel: HomeScreenViewModel, onSearch: (String) -> Unit) {
-    var searchText by remember { mutableStateOf("") }
+    var searchText by remember { mutableStateOf(viewModel.state.value.search) }
     val focusManager = LocalFocusManager.current
     var isFocused by remember { mutableStateOf(false) }
 
@@ -99,7 +91,7 @@ fun SearchBox(viewModel: HomeScreenViewModel, onSearch: (String) -> Unit) {
         TextField(
             value = searchText,
             onValueChange = { searchText = it },
-            placeholder = { Text(text = "Search") },
+            placeholder = { Text(text = stringResource(id = R.string.search)) },
             modifier = Modifier
                 .fillMaxWidth(0.8f)
                 .height(56.dp)
@@ -134,36 +126,63 @@ fun SearchBox(viewModel: HomeScreenViewModel, onSearch: (String) -> Unit) {
 }
 
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun NewsList(viewModel: HomeScreenViewModel, navController: NavController) {
     val state = viewModel.state.value
+    val refreshing = state.isLoading
+    val refreshState = rememberPullRefreshState(
+        refreshing = refreshing,
+        onRefresh = {
+            viewModel.onEvent(NewsEvent.Refresh)
+        }
+    )
 
-    if (state.isLoading) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(5) {
-                NewsItemShimmer()
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .pullRefresh(refreshState)
+    ) {
+        if (refreshing && state.news.isEmpty()) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(5) {
+                    NewsItemShimmer()
+                }
+            }
+        } else if (state.error.isNotEmpty()) {
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Image(
+                    painter = painterResource(id = R.drawable.error),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(48.dp)
+                )
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(state.news) { article ->
+                    NewsItem(article = article, navController)
+                }
             }
         }
-    } else if (state.error.isNotEmpty()) {
-        Box (Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
-            Image(painter = painterResource(id = R.drawable.error), contentDescription = "", Modifier.fillMaxSize().padding(48.dp))
-        }
-    } else {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(state.news) { article ->
-                NewsItem(article = article, navController)
-            }
-        }
+
+        PullRefreshIndicator(
+            refreshing = refreshing,
+            state = refreshState,
+            modifier = Modifier.align(Alignment.TopCenter)
+        )
     }
 }
+
 
 @Composable
 fun NewsItem(article: News, navController: NavController) {

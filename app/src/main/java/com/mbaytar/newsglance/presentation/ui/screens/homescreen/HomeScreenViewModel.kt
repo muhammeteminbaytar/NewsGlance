@@ -24,12 +24,16 @@ class HomeScreenViewModel @Inject constructor(
 
     private val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
+    private var currentSearchQuery: String = ""
+
+
     init {
         getNews(_state.value.search)
     }
 
     private var job: Job? = null
     private fun getNews(searchString: String) {
+        currentSearchQuery = searchString
         job?.cancel()
 
         job = getNewsTopUseCase.executeGetNewsTop(searchString).onEach {
@@ -40,15 +44,15 @@ class HomeScreenViewModel @Inject constructor(
                             publishedAt = formatDate(article.publishedAt)
                         )
                     } ?: emptyList()
-                    _state.value = NewsState(news = formattedNewsList)
+                    _state.value = _state.value.copy(news = formattedNewsList, isLoading = false, search = searchString)
                 }
 
                 is Resource.Error -> {
-                    _state.value = NewsState(error = it.message ?: "Error!")
+                    _state.value = _state.value.copy(error = it.message ?: "Error!", isLoading = false)
                 }
 
                 is Resource.Loading -> {
-                    _state.value = NewsState(isLoading = true)
+                    _state.value = _state.value.copy(isLoading = true)
                 }
             }
         }.launchIn(viewModelScope)
@@ -59,8 +63,17 @@ class HomeScreenViewModel @Inject constructor(
             is NewsEvent.Search -> {
                 getNews(event.searchString)
             }
+            NewsEvent.Refresh -> {
+                refreshNews()
+            }
         }
     }
+
+    private fun refreshNews() {
+        _state.value = _state.value.copy(isLoading = true)
+        getNews(currentSearchQuery)
+    }
+
 
     private fun formatDate(isoDate: String?): String {
         return isoDate?.let {
