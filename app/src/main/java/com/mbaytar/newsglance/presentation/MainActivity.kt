@@ -6,12 +6,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -25,11 +22,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.mbaytar.newsglance.presentation.ui.components.AppBottomBar
-import com.mbaytar.newsglance.presentation.ui.components.AppTopBar
 import com.mbaytar.newsglance.presentation.ui.screens.detailarticlescreen.DetailArticleScreen
 import com.mbaytar.newsglance.presentation.ui.screens.homescreen.HomeScreen
-import com.mbaytar.newsglance.presentation.ui.screens.homescreen.HomeScreenViewModel
-import com.mbaytar.newsglance.presentation.ui.screens.savescreen.SaveScreen
+import com.mbaytar.newsglance.presentation.ui.screens.settingscreen.SettingScreen
 import com.mbaytar.newsglance.presentation.ui.screens.webviewscreen.WebViewScreen
 import com.mbaytar.newsglance.presentation.ui.theme.NewsGlanceTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -75,7 +70,7 @@ fun Content(
             DetailArticleScreenContent(navController = navController)
         }
         composable(route = Screen.SaveScreen.route) {
-            SaveScreenContent(navController = navController)
+            SettingScreenContent(navController = navController)
         }
         composable(
             route = Screen.WebViewScreen.route,
@@ -112,13 +107,13 @@ fun DetailArticleScreenContent(navController: NavController) {
 }
 
 @Composable
-fun SaveScreenContent(navController: NavController) {
+fun SettingScreenContent(navController: NavController) {
     Column(
         Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        SaveScreen(navController = navController)
+        SettingScreen(navController = navController)
     }
 }
 

@@ -36,14 +36,14 @@ import com.mbaytar.newsglance.presentation.ui.theme.PrimaryColor
 @Composable
 fun AppBottomBar(navController: NavController, isNetworkConnect: Boolean) {
     var selectedItem by remember { mutableIntStateOf(0) }
-    val items = listOf("Home", "Save")
+    val items = listOf("Home", "Setting")
     val icons = listOf(
         R.drawable.ic_house,
-        R.drawable.ic_bookmark,
+        R.drawable.ic_setting,
     )
     val iconsFill = listOf(
         R.drawable.ic_house_fill,
-        R.drawable.ic_bookmark_fill
+        R.drawable.ic_setting_fill
     )
 
     Box {

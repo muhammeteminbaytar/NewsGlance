@@ -4,7 +4,7 @@ import com.mbaytar.newsglance.domain.model.News
 
 sealed class Screen(val route: String) {
     data object HomeScreen : Screen("Home")
-    data object SaveScreen : Screen("Save")
+    data object SaveScreen : Screen("Setting")
     data object WebViewScreen : Screen("WebView/{newsUrl}") {
         fun createRoute(newsUrl: String) = "WebView/$newsUrl"
     }

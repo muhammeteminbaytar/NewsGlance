@@ -1,4 +1,4 @@
-package com.mbaytar.newsglance.presentation.ui.screens.savescreen
+package com.mbaytar.newsglance.presentation.ui.screens.settingscreen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -9,10 +9,10 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 
 @Composable
-fun SaveScreen(navController: NavController) {
+fun SettingScreen(navController: NavController) {
     Scaffold {
         Column(Modifier.padding(it)) {
-            Text(text = "SaveScreen")
+            Text(text = "SettingScreen")
         }
     }
 }
