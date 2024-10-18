@@ -72,6 +72,11 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    implementation(libs.androidx.room.common)
+    implementation(libs.androidx.room.ktx)
+    implementation (libs.androidx.room.runtime)
+    kapt (libs.androidx.room.compiler)
+
     implementation (libs.androidx.material)
     implementation (libs.androidx.material.icons.extended)
 
@@ -121,6 +126,8 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
 
     implementation (libs.accompanist.swiperefresh)
+
+
 
 }
 

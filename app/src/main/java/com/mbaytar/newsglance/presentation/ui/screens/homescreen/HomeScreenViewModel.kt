@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
-    private val getNewsTopUseCase: GetNewsEverythingUseCase
+    private val getNewsEverythingUseCase: GetNewsEverythingUseCase
 ) : ViewModel() {
 
     private val _state = mutableStateOf(NewsState())
@@ -36,7 +36,7 @@ class HomeScreenViewModel @Inject constructor(
         currentSearchQuery = searchString
         job?.cancel()
 
-        job = getNewsTopUseCase.executeGetNewsTop(searchString).onEach {
+        job = getNewsEverythingUseCase.executeGetNewsEverything(searchString).onEach {
             when (it) {
                 is Resource.Success -> {
                     val formattedNewsList = it.data?.map { article ->

@@ -1,6 +1,5 @@
 package com.mbaytar.newsglance.domain.model
 
-import com.mbaytar.newsglance.data.remote.dto.Source
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
@@ -14,3 +13,15 @@ data class News(
     val url: String,
     val urlToImage: String
 ) : Parcelable
+
+fun News.toEntity(): NewsEntity {
+    return NewsEntity(
+        author = this.author,
+        content = this.content,
+        description = this.description,
+        publishedAt = this.publishedAt,
+        title = this.title,
+        url = this.url,
+        urlToImage = this.urlToImage
+    )
+}

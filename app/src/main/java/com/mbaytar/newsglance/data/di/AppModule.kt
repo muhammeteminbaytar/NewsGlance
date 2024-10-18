@@ -1,6 +1,9 @@
 package com.mbaytar.newsglance.data.di
 
 import android.content.Context
+import androidx.room.Room
+import com.mbaytar.newsglance.data.local.NewsDao
+import com.mbaytar.newsglance.data.local.NewsDatabase
 import com.mbaytar.newsglance.data.remote.NewsAPI
 import com.mbaytar.newsglance.data.remote.repository.NewsRepositoryImpl
 import com.mbaytar.newsglance.domain.repository.NewsRepository
@@ -29,15 +32,33 @@ object AppModule {
             .create(NewsAPI::class.java)
     }
 
-    @Provides
-    @Singleton
-    fun provideNewsRepository(api: NewsAPI) : NewsRepository {
-        return NewsRepositoryImpl(api)
-    }
-
     @Singleton
     @Provides
     fun provideNetworkObserver(@ApplicationContext context: Context): NetworkObserver {
         return NetworkObserver(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideNewsRepository(
+        api: NewsAPI,
+        newsDao: NewsDao
+    ): NewsRepository {
+        return NewsRepositoryImpl(api, newsDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDatabase(@ApplicationContext context: Context): NewsDatabase {
+        return Room.databaseBuilder(
+            context.applicationContext,
+            NewsDatabase::class.java,
+            "news_database"
+        ).build()
+    }
+
+    @Provides
+    fun provideNewsDao(database: NewsDatabase): NewsDao {
+        return database.newsDao()
     }
 }
