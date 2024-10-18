@@ -351,8 +351,13 @@ fun NewsItem(article: News, navController: NavController) {
             )
             Spacer(modifier = Modifier.weight(1f))
             Row(Modifier.padding(bottom = 24.dp)) {
+                val maxLength = 16
+                val displayedAuthor = article.author.let {
+                    if (it.length > maxLength) it.take(maxLength) + "..." else it
+                } ?: "Unknown"
+
                 Text(
-                    text = article.author ?: "Unknown",
+                    text = displayedAuthor,
                     fontSize = 14.sp,
                     color = Color.Gray,
                     textAlign = TextAlign.Center,
