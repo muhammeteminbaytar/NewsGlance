@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.mbaytar.newsglance.data.local.NewsDao
 import com.mbaytar.newsglance.data.local.NewsDatabase
+import com.mbaytar.newsglance.data.local.PreferencesHelper
 import com.mbaytar.newsglance.data.remote.NewsAPI
 import com.mbaytar.newsglance.data.remote.repository.NewsRepositoryImpl
 import com.mbaytar.newsglance.domain.repository.NewsRepository
@@ -60,5 +61,11 @@ object AppModule {
     @Provides
     fun provideNewsDao(database: NewsDatabase): NewsDao {
         return database.newsDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providePreferencesHelper(@ApplicationContext context: Context): PreferencesHelper {
+        return PreferencesHelper(context)
     }
 }

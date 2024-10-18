@@ -4,6 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mbaytar.newsglance.data.local.PreferencesHelper
 import com.mbaytar.newsglance.domain.use_case.get_news_top.GetNewsEverythingUseCase
 import com.mbaytar.newsglance.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
-    private val getNewsEverythingUseCase: GetNewsEverythingUseCase
+    private val getNewsEverythingUseCase: GetNewsEverythingUseCase,
+    private val preferencesHelper: PreferencesHelper
 ) : ViewModel() {
 
     private val _state = mutableStateOf(NewsState())
@@ -28,7 +30,14 @@ class HomeScreenViewModel @Inject constructor(
 
 
     init {
-        getNews(_state.value.search)
+        var lastSearch = preferencesHelper.getLastSearchQuery()
+
+        if (lastSearch.isNotEmpty()) {
+            _state.value = _state.value.copy(search = lastSearch)
+        } else {
+            lastSearch = _state.value.search
+        }
+        getNews(lastSearch)
     }
 
     private var job: Job? = null
@@ -44,11 +53,17 @@ class HomeScreenViewModel @Inject constructor(
                             publishedAt = formatDate(article.publishedAt)
                         )
                     } ?: emptyList()
-                    _state.value = _state.value.copy(news = formattedNewsList, isLoading = false, search = searchString)
+                    _state.value = _state.value.copy(
+                        news = formattedNewsList,
+                        isLoading = false,
+                        search = searchString
+                    )
+                    preferencesHelper.saveLastSearchQuery(searchString)
                 }
 
                 is Resource.Error -> {
-                    _state.value = _state.value.copy(error = it.message ?: "Error!", isLoading = false)
+                    _state.value =
+                        _state.value.copy(error = it.message ?: "Error!", isLoading = false)
                 }
 
                 is Resource.Loading -> {
@@ -59,10 +74,11 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     fun onEvent(event: NewsEvent) {
-        when(event) {
+        when (event) {
             is NewsEvent.Search -> {
                 getNews(event.searchString)
             }
+
             NewsEvent.Refresh -> {
                 refreshNews()
             }

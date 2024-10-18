@@ -22,6 +22,7 @@ class NewsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun saveNewsToLocal(newsList: List<NewsEntity>) {
+        newsDao.deleteAllNews()
         newsDao.insertNews(newsList)
     }
 
