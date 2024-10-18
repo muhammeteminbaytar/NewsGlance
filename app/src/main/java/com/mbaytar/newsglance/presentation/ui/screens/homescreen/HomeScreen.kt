@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,6 +26,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -62,6 +65,7 @@ import com.mbaytar.newsglance.R
 import com.mbaytar.newsglance.domain.model.News
 import com.mbaytar.newsglance.presentation.Screen
 import com.mbaytar.newsglance.presentation.ui.components.AppTopBar
+import com.mbaytar.newsglance.presentation.ui.theme.LightGray
 import com.mbaytar.newsglance.presentation.ui.theme.PrimaryColor
 import com.mbaytar.newsglance.util.components.ShimmerEffect
 import kotlinx.coroutines.delay
@@ -73,9 +77,25 @@ fun HomeScreen(
 ) {
     Scaffold(topBar = {
         AppTopBar(navController = navController, actions = {
-            SearchBox(viewModel, onSearch = {
-                viewModel.onEvent(NewsEvent.Search(it))
-            })
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Box(
+                    modifier = Modifier.weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    SearchBox(viewModel, onSearch = {
+                        viewModel.onEvent(NewsEvent.Search(it))
+                    })
+                }
+
+                SortButton()
+            }
+
         })
     }) { padding ->
         Column(Modifier.padding(padding)) {
@@ -219,7 +239,6 @@ fun SearchBox(viewModel: HomeScreenViewModel, onSearch: (String) -> Unit) {
             onValueChange = { searchText = it },
             placeholder = { Text(text = stringResource(id = R.string.search)) },
             modifier = Modifier
-                .fillMaxWidth(0.8f)
                 .height(56.dp)
                 .clip(RoundedCornerShape(24.dp))
                 .border(
@@ -251,6 +270,26 @@ fun SearchBox(viewModel: HomeScreenViewModel, onSearch: (String) -> Unit) {
     }
 }
 
+@Composable
+fun SortButton() {
+    Row {
+        Spacer(modifier = Modifier.width(12.dp))
+        Box(
+            Modifier
+                .clickable {
+
+                }
+                .clip(shape = CircleShape)
+                .background(LightGray)
+                .padding(12.dp)) {
+            androidx.compose.material.Icon(
+                painterResource(id = R.drawable.ic_filter),
+                contentDescription = "",
+                tint = Color.DarkGray
+            )
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
