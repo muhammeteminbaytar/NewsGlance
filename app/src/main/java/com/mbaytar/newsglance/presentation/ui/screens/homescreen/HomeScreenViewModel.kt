@@ -33,7 +33,7 @@ class HomeScreenViewModel @Inject constructor(
         var lastSearch = preferencesHelper.getLastSearchQuery()
 
         if (lastSearch.isNotEmpty()) {
-            _state.value = _state.value.copy(search = lastSearch)
+            _state.value = _state.value.copy(search = lastSearch, error = "")
         } else {
             lastSearch = _state.value.search
         }
@@ -56,7 +56,8 @@ class HomeScreenViewModel @Inject constructor(
                     _state.value = _state.value.copy(
                         news = formattedNewsList,
                         isLoading = false,
-                        search = searchString
+                        search = searchString,
+                        error = ""
                     )
                     preferencesHelper.saveLastSearchQuery(searchString)
                 }
@@ -86,7 +87,7 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     private fun refreshNews() {
-        _state.value = _state.value.copy(isLoading = true)
+        _state.value = _state.value.copy(isLoading = true, error = "")
         getNews(currentSearchQuery)
     }
 
