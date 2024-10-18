@@ -1,5 +1,6 @@
 package com.mbaytar.newsglance.presentation.ui.screens.homescreen
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -18,6 +19,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.ExperimentalMaterialApi
@@ -30,10 +34,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,6 +64,7 @@ import com.mbaytar.newsglance.presentation.Screen
 import com.mbaytar.newsglance.presentation.ui.components.AppTopBar
 import com.mbaytar.newsglance.presentation.ui.theme.PrimaryColor
 import com.mbaytar.newsglance.util.components.ShimmerEffect
+import kotlinx.coroutines.delay
 
 @Composable
 fun HomeScreen(
@@ -71,10 +79,125 @@ fun HomeScreen(
         })
     }) {
         Column(Modifier.padding(it)) {
+            NewsCarousel(news = viewModel.state.value.news.take(5), navController = navController)
             NewsList(viewModel = viewModel, navController)
         }
     }
 }
+
+
+@Composable
+fun NewsCarousel(news: List<News>, navController: NavController) {
+    if (news.isNotEmpty()) {
+        var currentPage by remember { mutableIntStateOf(0) }
+        val pagerState = rememberPagerState { 5 }
+        val pageCount = news.size
+
+        LaunchedEffect(key1 = currentPage) {
+            while (true) {
+                delay(3000L)
+                currentPage = (pagerState.currentPage + 1) % pageCount
+                if (pagerState.currentPage == pageCount - 1) {
+                    pagerState.scrollToPage(0)
+                } else {
+                    pagerState.animateScrollToPage(currentPage)
+                }
+            }
+        }
+
+        LaunchedEffect(pagerState) {
+            snapshotFlow { pagerState.currentPage }.collect { page ->
+                currentPage = page
+            }
+        }
+
+        Column(
+            Modifier
+                .padding(horizontal = 12.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .fillMaxWidth()
+        ) {
+            HorizontalPager(
+                beyondViewportPageCount = pageCount,
+                state = pagerState,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(250.dp)
+            ) { page ->
+                val article = news[page]
+                Box(
+                    modifier = Modifier
+                        .clickable {
+                            navController.currentBackStackEntry?.savedStateHandle?.set("newsDetail", article)
+                            navController.navigate(Screen.DetailScreen.route)
+                        }
+                ) {
+                    Image(
+                        painter = if (article.urlToImage.isNotEmpty()) rememberAsyncImagePainter(
+                            article.urlToImage
+                        ) else painterResource(
+                            id = R.drawable.landscape_news
+                        ),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(16.dp))
+                            .height(250.dp),
+                        contentScale = ContentScale.Crop
+                    )
+
+                    Column(
+                        modifier = Modifier
+                            .align(Alignment.BottomStart)
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(Color.Black.copy(alpha = 0.5f))
+                            .padding(16.dp)
+                    ) {
+                        Text(
+                            text = article.author ?: "Unknown",
+                            color = Color.White.copy(alpha = 0.8f),
+                            fontSize = 12.sp
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = article.title,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            fontSize = 16.sp,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = article.publishedAt,
+                            color = Color.White.copy(alpha = 0.8f),
+                            fontSize = 12.sp
+                        )
+                    }
+                }
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                repeat(pageCount) { page ->
+                    val color = if (page == pagerState.currentPage) PrimaryColor else Color.LightGray
+                    Box(
+                        modifier = Modifier
+                            .size(12.dp)
+                            .padding(2.dp)
+                            .clip(CircleShape)
+                            .background(color)
+                    )
+                }
+            }
+        }
+    }
+}
+
+
 
 @Composable
 fun SearchBox(viewModel: HomeScreenViewModel, onSearch: (String) -> Unit) {
