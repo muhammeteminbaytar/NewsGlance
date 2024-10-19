@@ -19,11 +19,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.mbaytar.newsglance.presentation.ui.components.AppBottomBar
 import com.mbaytar.newsglance.presentation.ui.screens.detailarticlescreen.DetailArticleScreen
 import com.mbaytar.newsglance.presentation.ui.screens.homescreen.HomeScreen
+import com.mbaytar.newsglance.presentation.ui.screens.onboardingscreen.OnBoardingScreen
 import com.mbaytar.newsglance.presentation.ui.screens.settingscreen.SettingScreen
 import com.mbaytar.newsglance.presentation.ui.screens.webviewscreen.WebViewScreen
 import com.mbaytar.newsglance.presentation.ui.theme.NewsGlanceTheme
@@ -42,10 +44,21 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val isNetworkAvailable by mainViewModel.isNetworkAvailable.collectAsState()
 
+                val currentBackStackEntry by navController.currentBackStackEntryAsState()
+                val currentDestination =
+                    currentBackStackEntry?.destination?.route ?: Screen.HomeScreen.route
+
                 Scaffold(
-                    bottomBar = { AppBottomBar(navController = navController, isNetworkAvailable) }) {
+                    bottomBar = {
+                        if (navController.currentDestination?.route != Screen.OnBoardingScreen.route) {
+                            AppBottomBar(
+                                navController = navController,
+                                isNetworkAvailable
+                            )
+                        }
+                    }) {
                     Column(Modifier.padding(it)) {
-                        Content(navController = navController)
+                        Content(navController = navController, mainViewModel)
                     }
                 }
             }
@@ -60,9 +73,13 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Content(
-    navController: NavHostController
+    navController: NavHostController,
+    viewModel: MainViewModel
 ) {
-    NavHost(navController = navController, startDestination = Screen.HomeScreen.route) {
+    NavHost(
+        navController = navController,
+        startDestination = if (viewModel.isShowOnBoard) Screen.HomeScreen.route else Screen.OnBoardingScreen.route
+    ) {
         composable(route = Screen.HomeScreen.route) {
             HomeScreenContent(navController = navController)
         }
@@ -71,6 +88,9 @@ fun Content(
         }
         composable(route = Screen.SaveScreen.route) {
             SettingScreenContent(navController = navController)
+        }
+        composable(route = Screen.OnBoardingScreen.route) {
+            OnBoardingScreenContent(navController = navController)
         }
         composable(
             route = Screen.WebViewScreen.route,
@@ -114,6 +134,17 @@ fun SettingScreenContent(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         SettingScreen(navController = navController)
+    }
+}
+
+@Composable
+fun OnBoardingScreenContent(navController: NavController) {
+    Column(
+        Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        OnBoardingScreen(navController = navController)
     }
 }
 

@@ -15,6 +15,7 @@ class PreferencesHelper @Inject constructor(context: Context) {
         private const val PREFS_NAME = "news_prefs"
         private const val KEY_SEARCH_QUERY = "key_search_query"
         private const val KEY_SORT_OPTION = "key_sort_option"
+        private const val ON_BOARD_SCREEN_SHOW = "on_board_screen_show"
     }
 
     fun saveLastSearchQuery(query: String) {
@@ -31,5 +32,13 @@ class PreferencesHelper @Inject constructor(context: Context) {
 
     fun getSortOption(): String {
         return sharedPreferences.getString(KEY_SORT_OPTION, "publishedAt") ?: "publishedAt"
+    }
+
+    fun saveOnBoardScreenState(isOnBoardShow : Boolean) {
+        sharedPreferences.edit().putBoolean(ON_BOARD_SCREEN_SHOW, isOnBoardShow).apply()
+    }
+
+    fun getOnBoardScreenState(): Boolean {
+        return sharedPreferences.getBoolean(ON_BOARD_SCREEN_SHOW, false)
     }
 }
