@@ -9,6 +9,8 @@ import com.mbaytar.newsglance.domain.use_case.get_news_top.GetNewsEverythingUseC
 import com.mbaytar.newsglance.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import java.time.ZonedDateTime
@@ -23,6 +25,12 @@ class HomeScreenViewModel @Inject constructor(
 
     private val _state = mutableStateOf(NewsState())
     val state: State<NewsState> = _state
+
+    private val _sortIsOpen = MutableStateFlow(false)
+    val sortIsOpen: StateFlow<Boolean> = _sortIsOpen
+
+    private val _selectedSortOption = MutableStateFlow("publishedAt")
+    val selectedSortOption: StateFlow<String> = _selectedSortOption
 
     private val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
@@ -91,6 +99,13 @@ class HomeScreenViewModel @Inject constructor(
         getNews(currentSearchQuery)
     }
 
+    fun setSortIsOpen(isOpen: Boolean){
+        _sortIsOpen.value = isOpen
+    }
+
+    fun updateSortOption(option: String) {
+        _selectedSortOption.value = option
+    }
 
     private fun formatDate(isoDate: String?): String {
         return isoDate?.let {

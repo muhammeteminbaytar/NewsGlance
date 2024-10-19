@@ -26,22 +26,32 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.RadioButton
+import androidx.compose.material.RadioButtonDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -67,39 +77,47 @@ import com.mbaytar.newsglance.presentation.Screen
 import com.mbaytar.newsglance.presentation.ui.components.AppTopBar
 import com.mbaytar.newsglance.presentation.ui.theme.LightGray
 import com.mbaytar.newsglance.presentation.ui.theme.PrimaryColor
+import com.mbaytar.newsglance.presentation.ui.theme.SecondaryColor
 import com.mbaytar.newsglance.util.components.ShimmerEffect
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.util.Locale
 
 @Composable
 fun HomeScreen(
     navController: NavController,
     viewModel: HomeScreenViewModel = hiltViewModel()
 ) {
+    val settingIsOpen = viewModel.sortIsOpen.collectAsState().value
+
     Scaffold(topBar = {
         AppTopBar(navController = navController, actions = {
-            Row(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(end = 12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                    .padding(end = 12.dp)
             ) {
-                Box(
-                    modifier = Modifier.weight(1f),
-                    contentAlignment = Alignment.Center
-                ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     SearchBox(viewModel, onSearch = {
                         viewModel.onEvent(NewsEvent.Search(it))
                     })
+                    SortButton(sortClick = {
+                        viewModel.setSortIsOpen(!settingIsOpen)
+                    })
                 }
 
-                SortButton()
             }
 
         })
     }) { padding ->
         Column(Modifier.padding(padding)) {
             NewsList(viewModel = viewModel, navController)
+        }
+    }
+
+    if (settingIsOpen) {
+        SortBottomSheet(viewModel = viewModel) {
+            viewModel.setSortIsOpen(false)
         }
     }
 }
@@ -230,7 +248,6 @@ fun SearchBox(viewModel: HomeScreenViewModel, onSearch: (String) -> Unit) {
 
     Box(
         modifier = Modifier
-            .fillMaxWidth()
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -239,6 +256,7 @@ fun SearchBox(viewModel: HomeScreenViewModel, onSearch: (String) -> Unit) {
             onValueChange = { searchText = it },
             placeholder = { Text(text = stringResource(id = R.string.search)) },
             modifier = Modifier
+                .fillMaxWidth(0.8f)
                 .height(56.dp)
                 .clip(RoundedCornerShape(24.dp))
                 .border(
@@ -271,13 +289,13 @@ fun SearchBox(viewModel: HomeScreenViewModel, onSearch: (String) -> Unit) {
 }
 
 @Composable
-fun SortButton() {
+fun SortButton(sortClick: () -> Unit) {
     Row {
         Spacer(modifier = Modifier.width(12.dp))
         Box(
             Modifier
                 .clickable {
-
+                    sortClick()
                 }
                 .clip(shape = CircleShape)
                 .background(LightGray)
@@ -287,6 +305,93 @@ fun SortButton() {
                 contentDescription = "",
                 tint = Color.DarkGray
             )
+        }
+    }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SortBottomSheet(
+    viewModel: HomeScreenViewModel,
+    onDismiss: () -> Unit
+) {
+    val modalBottomSheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
+
+    val selectedOption by viewModel.selectedSortOption.collectAsState()
+    var tempSelectedOption by remember { mutableStateOf(selectedOption) }
+
+    ModalBottomSheet(
+        onDismissRequest = {
+            scope.launch {
+                modalBottomSheetState.hide()
+                onDismiss()
+            }
+        },
+        sheetState = modalBottomSheetState,
+        shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(),
+            verticalArrangement = Arrangement.Top
+        ) {
+            val options = listOf("publishedAt", "relevancy", "popularity")
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = stringResource(id = R.string.sort_by),
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(start = 16.dp),
+                        fontSize = 20.sp
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    Button(onClick = {
+                        viewModel.updateSortOption(tempSelectedOption)
+                        scope.launch {
+                            modalBottomSheetState.hide()
+                            onDismiss()
+                        }
+                    }, Modifier.padding(end = 16.dp)) {
+                        Icon(imageVector = Icons.Filled.Check, contentDescription = "")
+                    }
+                }
+
+                options.forEach { option ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                tempSelectedOption = option
+                            }
+                            .padding(16.dp)
+                    ) {
+                        RadioButton(
+                            selected = tempSelectedOption == option,
+                            onClick = { tempSelectedOption = option },
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = SecondaryColor,
+                                unselectedColor = Color.Gray,
+                            )
+                        )
+                        Text(text = option.replaceFirstChar {
+                            if (it.isLowerCase()) it.titlecase(
+                                Locale.ROOT
+                            ) else it.toString()
+                        }, modifier = Modifier.padding(start = 8.dp))
+                    }
+                }
+            }
         }
     }
 }
