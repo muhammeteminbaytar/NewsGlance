@@ -3,4 +3,8 @@
     <string name="network_not_connection">No Internet Connection</string>
     <string name="search">Search</string>
     <string name="sort_by">Sort By</string>
+    <string name="faq">"Frequently Asked Questions (FAQ)"</string>
+    <string name="about">About</string>
+    <string name="settings">Settings</string>
+    <string name="send_feedback">Send Feedback</string>
 </resources>
