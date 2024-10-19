@@ -357,6 +357,7 @@ fun SortBottomSheet(
                     Spacer(modifier = Modifier.weight(1f))
                     Button(onClick = {
                         viewModel.updateSortOption(tempSelectedOption)
+                        viewModel.onEvent(NewsEvent.Refresh)
                         scope.launch {
                             modalBottomSheetState.hide()
                             onDismiss()

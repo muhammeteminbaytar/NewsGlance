@@ -10,6 +10,7 @@ interface NewsAPI {
     @GET("everything")
     suspend fun getNewsEverything(
         @Query("q") country: String,
+        @Query("sortBy") sortBy: String,
         @Query("apiKey") apiKey: String = NEWS_API_KEY
     ): NewsEverythingDto
 }

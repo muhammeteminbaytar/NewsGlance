@@ -14,6 +14,7 @@ class PreferencesHelper @Inject constructor(context: Context) {
     companion object {
         private const val PREFS_NAME = "news_prefs"
         private const val KEY_SEARCH_QUERY = "key_search_query"
+        private const val KEY_SORT_OPTION = "key_sort_option"
     }
 
     fun saveLastSearchQuery(query: String) {
@@ -22,5 +23,13 @@ class PreferencesHelper @Inject constructor(context: Context) {
 
     fun getLastSearchQuery(): String {
         return sharedPreferences.getString(KEY_SEARCH_QUERY, "") ?: ""
+    }
+
+    fun saveSortOption(option: String) {
+        sharedPreferences.edit().putString(KEY_SORT_OPTION, option).apply()
+    }
+
+    fun getSortOption(): String {
+        return sharedPreferences.getString(KEY_SORT_OPTION, "publishedAt") ?: "publishedAt"
     }
 }

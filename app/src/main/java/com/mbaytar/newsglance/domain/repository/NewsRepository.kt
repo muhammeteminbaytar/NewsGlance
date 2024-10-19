@@ -6,7 +6,7 @@ import com.mbaytar.newsglance.domain.model.NewsEntity
 
 
 interface NewsRepository {
-    suspend fun getNewsEverything(searchString: String) : NewsEverythingDto
+    suspend fun getNewsEverything(searchString: String, sortBy : String) : NewsEverythingDto
     suspend fun saveNewsToLocal(newsList: List<NewsEntity>)
     suspend fun getNewsFromLocal(): List<NewsEntity>
 }

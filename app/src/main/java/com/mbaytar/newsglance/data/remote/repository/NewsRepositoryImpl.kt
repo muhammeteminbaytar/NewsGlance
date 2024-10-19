@@ -13,12 +13,12 @@ import javax.inject.Inject
 class NewsRepositoryImpl @Inject constructor(
     private val api: NewsAPI, private val newsDao: NewsDao
 ) : NewsRepository {
-    override suspend fun getNewsEverything(searchString: String): NewsEverythingDto {
+    override suspend fun getNewsEverything(searchString: String, sortBy : String): NewsEverythingDto {
         val localNews =
-            api.getNewsEverything(searchString).toNewsEverythingList().map { it.toEntity() }
+            api.getNewsEverything(searchString, sortBy).toNewsEverythingList().map { it.toEntity() }
         saveNewsToLocal(localNews)
 
-        return api.getNewsEverything(searchString)
+        return api.getNewsEverything(searchString, sortBy)
     }
 
     override suspend fun saveNewsToLocal(newsList: List<NewsEntity>) {

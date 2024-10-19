@@ -19,11 +19,11 @@ class GetNewsEverythingUseCase @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
 
-    fun executeGetNewsEverything(search: String): Flow<Resource<List<News>>> = flow {
+    fun executeGetNewsEverything(search: String, sortBy: String): Flow<Resource<List<News>>> = flow {
         try {
             emit(Resource.Loading())
             if (NetworkUtils.hasInternetConnection(context)) {
-                val newsList = repository.getNewsEverything(search)
+                val newsList = repository.getNewsEverything(search, sortBy)
 
                 if (newsList.articles.isNotEmpty()) {
                     emit(Resource.Success(newsList.toNewsEverythingList()))

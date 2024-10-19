@@ -29,7 +29,7 @@ class HomeScreenViewModel @Inject constructor(
     private val _sortIsOpen = MutableStateFlow(false)
     val sortIsOpen: StateFlow<Boolean> = _sortIsOpen
 
-    private val _selectedSortOption = MutableStateFlow("publishedAt")
+    private val _selectedSortOption = MutableStateFlow(preferencesHelper.getSortOption())
     val selectedSortOption: StateFlow<String> = _selectedSortOption
 
     private val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
@@ -53,7 +53,7 @@ class HomeScreenViewModel @Inject constructor(
         currentSearchQuery = searchString
         job?.cancel()
 
-        job = getNewsEverythingUseCase.executeGetNewsEverything(searchString).onEach {
+        job = getNewsEverythingUseCase.executeGetNewsEverything(searchString, _selectedSortOption.value).onEach {
             when (it) {
                 is Resource.Success -> {
                     val formattedNewsList = it.data?.map { article ->
@@ -105,6 +105,7 @@ class HomeScreenViewModel @Inject constructor(
 
     fun updateSortOption(option: String) {
         _selectedSortOption.value = option
+        preferencesHelper.saveSortOption(option)
     }
 
     private fun formatDate(isoDate: String?): String {
