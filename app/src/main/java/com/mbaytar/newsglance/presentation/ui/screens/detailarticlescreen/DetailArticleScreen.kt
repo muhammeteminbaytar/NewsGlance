@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -34,6 +35,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import coil.decode.SvgDecoder
+import coil.request.ImageRequest
 import com.mbaytar.newsglance.R
 import com.mbaytar.newsglance.domain.model.News
 import com.mbaytar.newsglance.presentation.Screen
@@ -118,18 +121,30 @@ fun NewsDetail(viewModel: DetailViewModel) {
     val news = viewModel.newsItem.collectAsState()
 
     Column {
-        Image(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp)
-                .clip(shape = RoundedCornerShape(12.dp)),
-            painter = if (news.value?.urlToImage?.isNotEmpty() == true) rememberAsyncImagePainter(
-                news.value?.urlToImage
-            ) else painterResource(
-                id = R.drawable.landscape_news
-            ),
-            contentDescription = "", contentScale = ContentScale.Crop,
-        )
+        news.value?.let { newsItem ->
+            Image(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp)
+                    .clip(shape = RoundedCornerShape(12.dp)),
+                painter = if (newsItem.urlToImage.isNotEmpty()) rememberAsyncImagePainter(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(newsItem.urlToImage)
+                        .apply {
+                            if (newsItem.urlToImage.endsWith("svg", true)) {
+                                decoderFactory(SvgDecoder.Factory())
+                            }
+                        }
+                        .build(),
+                    error = painterResource(id = R.drawable.news),
+                    placeholder = painterResource(id = R.drawable.news)
+                ) else painterResource(
+                    id = R.drawable.landscape_news
+                ),
+                contentDescription = "",
+                contentScale = ContentScale.Crop,
+            )
+        }
 
         Column {
             news.value?.title?.let {

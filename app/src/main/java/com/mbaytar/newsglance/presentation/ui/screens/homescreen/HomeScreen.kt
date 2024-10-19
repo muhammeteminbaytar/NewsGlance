@@ -76,6 +76,8 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import coil.decode.SvgDecoder
+import coil.request.ImageRequest
 import com.mbaytar.newsglance.R
 import com.mbaytar.newsglance.domain.model.News
 import com.mbaytar.newsglance.presentation.Screen
@@ -202,7 +204,16 @@ fun NewsCarousel(news: List<News>, navController: NavController) {
                 ) {
                     Image(
                         painter = if (article.urlToImage.isNotEmpty()) rememberAsyncImagePainter(
-                            article.urlToImage
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(article.urlToImage)
+                                .apply {
+                                    if (article.urlToImage.endsWith("svg", true)) {
+                                        decoderFactory(SvgDecoder.Factory())
+                                    }
+                                }
+                                .build(),
+                            error = painterResource(id = R.drawable.news),
+                            placeholder = painterResource(id = R.drawable.news)
                         ) else painterResource(
                             id = R.drawable.landscape_news
                         ),
@@ -503,16 +514,24 @@ fun NewsItem(article: News, navController: NavController) {
             }
     ) {
         Image(
-            painter = if (article.urlToImage.isNotEmpty()) rememberAsyncImagePainter(article.urlToImage) else painterResource(
-                id = R.drawable.news
+            painter = rememberAsyncImagePainter(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(article.urlToImage)
+                    .apply {
+                        if (article.urlToImage.endsWith("svg", true)) {
+                            decoderFactory(SvgDecoder.Factory())
+                        }
+                    }
+                    .build(),
+                error = painterResource(id = R.drawable.news),
+                placeholder = painterResource(id = R.drawable.news)
             ),
             contentDescription = "",
             modifier = Modifier
                 .size(100.dp)
                 .clip(RoundedCornerShape(12.dp)),
-            contentScale = ContentScale.Crop,
-
-            )
+            contentScale = ContentScale.Crop
+        )
         Spacer(modifier = Modifier.width(8.dp))
         Column {
             Text(

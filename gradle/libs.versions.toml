@@ -1,6 +1,7 @@
 [versions]
 accompanistSwiperefresh = "0.31.0-alpha"
 agp = "8.3.1"
+coilSvg = "2.0.0"
 kotlin = "1.9.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -38,6 +39,7 @@ firebaseMessagingKtx = "24.0.2"
 [libraries]
 accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanistSwiperefresh" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+coil-svg = { module = "io.coil-kt:coil-svg", version.ref = "coilSvg" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

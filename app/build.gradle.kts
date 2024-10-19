@@ -110,6 +110,8 @@ dependencies {
 
     // Coil
     implementation(libs.coil.compose)
+    implementation(libs.coil.svg)
+
 
     //ui controller
     implementation (libs.accompanist.systemuicontroller)
