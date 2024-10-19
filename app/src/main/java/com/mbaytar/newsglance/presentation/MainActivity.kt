@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mainViewModel.startNetworkMonitoring()
-
+        mainViewModel.scheduleDreamWorkManagerProcess(this)
         setContent {
             NewsGlanceTheme {
                 val navController = rememberNavController()
