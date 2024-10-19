@@ -12,7 +12,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
@@ -20,6 +22,7 @@ import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -28,6 +31,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.mbaytar.newsglance.presentation.ui.theme.LightGray
+import com.mbaytar.newsglance.presentation.ui.theme.PrimaryColor
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 
@@ -44,6 +48,7 @@ fun WebViewScreen(
     }
 
     val currentUrl = viewModel.newsUrl.collectAsState().value
+    val isLoading = viewModel.isLoading.collectAsState().value
 
     Scaffold(
         topBar = {
@@ -52,18 +57,34 @@ fun WebViewScreen(
     ) {
         Column(Modifier.padding(it)) {
             if (currentUrl.isNotEmpty()) {
-                AndroidView(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 12.dp),
-                    factory = { context ->
-                        WebView(context).apply {
-                            webViewClient = WebViewClient()
-                            settings.javaScriptEnabled = true
-                            loadUrl(currentUrl) 
+                Box(Modifier.fillMaxSize()) {
+                    AndroidView(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = 12.dp),
+                        factory = { context ->
+                            WebView(context).apply {
+                                webViewClient = object : WebViewClient() {
+                                    override fun onPageFinished(view: WebView?, url: String?) {
+                                        viewModel.pageLoaded() // Notify ViewModel when page is loaded
+                                    }
+                                }
+                                settings.javaScriptEnabled = true
+                                loadUrl(currentUrl)
+                            }
+                        }
+                    )
+
+                    if (isLoading) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .wrapContentSize(Alignment.Center)
+                        ) {
+                            CircularProgressIndicator(color = PrimaryColor)
                         }
                     }
-                )
+                }
             }
         }
     }
