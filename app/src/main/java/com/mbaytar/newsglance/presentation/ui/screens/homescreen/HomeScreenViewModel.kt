@@ -112,12 +112,12 @@ class HomeScreenViewModel @Inject constructor(
         preferencesHelper.saveSortOption(option)
     }
 
-    private fun formatDate(isoDate: String?): String {
+    fun formatDate(isoDate: String?): String {
         return isoDate?.let {
             try {
                 ZonedDateTime.parse(it).format(dateFormatter)
             } catch (e: Exception) {
-                "Unknown date"
+                isoDate
             }
         } ?: "Unknown date"
     }

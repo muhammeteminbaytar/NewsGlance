@@ -1,6 +1,5 @@
 package com.mbaytar.newsglance.presentation.ui.screens.onboardingscreen
 
-import android.content.Context
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -198,7 +197,7 @@ fun OnBoardingBottomButton(
             onClick = {
                 if (isLastPage) {
                     navigationActions.onGetStartedClicked()
-                    viewModel.finishOnBoard(context)
+                    viewModel.finishOnBoard()
                 } else {
                     navigationActions.onNextClicked()
                 }
