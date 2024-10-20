@@ -56,7 +56,7 @@ class MainViewModel @Inject constructor(
 
         val workRequest = OneTimeWorkRequestBuilder<NewsWorker>()
             .setInputData(data)
-            .setInitialDelay(5, TimeUnit.SECONDS)
+            .setInitialDelay(1, TimeUnit.HOURS)
             .build()
         WorkManager.getInstance(context).enqueue(workRequest)
     }
