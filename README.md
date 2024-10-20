@@ -182,6 +182,15 @@ In the NewsGlance application, modern Android development tools and libraries we
   - Automatic thread management, reducing the need for manual handling.
 
 
+## Tests and Testing Libraries
+
+Unit tests were written only for the ViewModels in the application to verify their functionality.
+
+### Libraries Used
+
+- **JUnit**: The primary framework for unit testing.
+- **MockK**: Used for mocking dependencies in the ViewModels.
+- **Coroutine Test**: Used to test asynchronous operations in the ViewModels.
 
 
 
