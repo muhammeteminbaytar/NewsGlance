@@ -66,7 +66,7 @@ fun WebViewScreen(
                             WebView(context).apply {
                                 webViewClient = object : WebViewClient() {
                                     override fun onPageFinished(view: WebView?, url: String?) {
-                                        viewModel.pageLoaded() // Notify ViewModel when page is loaded
+                                        viewModel.pageLoaded()
                                     }
                                 }
                                 settings.javaScriptEnabled = true

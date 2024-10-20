@@ -98,7 +98,7 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
-    private fun refreshNews() {
+    fun refreshNews() {
         _state.value = _state.value.copy(isLoading = true, error = "")
         getNews(currentSearchQuery)
     }

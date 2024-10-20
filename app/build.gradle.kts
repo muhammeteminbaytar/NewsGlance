@@ -66,12 +66,15 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.firebase.messaging.ktx)
     testImplementation(libs.junit)
+    testImplementation (libs.mockk)
+    testImplementation(libs.mockk.android)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    testImplementation (libs.kotlin.test)
 
     implementation(libs.androidx.room.common)
     implementation(libs.androidx.room.ktx)
@@ -127,9 +130,12 @@ dependencies {
     // Coroutines
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
+    testImplementation (libs.kotlinx.coroutines.test)
 
     implementation (libs.accompanist.swiperefresh)
 
+    testImplementation (libs.androidx.core.testing)
+    testImplementation (libs.truth)
 
 
 }
